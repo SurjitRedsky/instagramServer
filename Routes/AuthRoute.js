@@ -20,7 +20,7 @@ const router = express.Router();
 router.post("/login", loginUser);
 router.post("/register", registerUser);
 router.put("/add/:id",addBirthday)
-router.post(`/signUp/:data`, sendConfirmationCode);
+router.post(`/signUp/:id`, sendConfirmationCode);
 router.put(`/verified/:id`, confirmation);
 router.put(`/verified/resend/:id`, resend);
 router.put(`/signUp/user/:id`, sginUpUser);
