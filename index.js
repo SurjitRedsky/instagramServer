@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 // import process from "node:process";
 import cors from "cors";
 import fileUpload from "express-fileupload";
-import authMiddleWare from "../server/Middleware/AuthMiddleware.js";
+import authMiddleWare from "./Middleware/AuthMiddleware.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
@@ -62,7 +62,7 @@ app.use("/chatRoom", chatRoomRoute);
 app.use("/groupChat", groupChatRoute);
 app.use("/likePost", likeRoute);
 app.use("/comment", commentRoute);
-app.use("/follow", authMiddleWare, followRoute);
+app.use("/follow",authMiddleWare, followRoute);
 app.use("/block",blockUserRoute)
 
 // auth middleware
