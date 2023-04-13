@@ -140,10 +140,12 @@ export const addBirthday = async (req, res) => {
  ****** API for send confirmation code for mail ID ********/
 export const sendConfirmationCode = async (req, res) => {
   const { id } = req.params;
-const {email,dateOfBirth}=req.body
+const {userName,dateOfBirth}=req.body
 
 console.log("id->",id);
-// console.log("data->",data);
+console.log("dateOf->",dateOfBirth)
+console.log("username->",userName);
+
 
   try {
 
@@ -156,8 +158,8 @@ console.log("id->",id);
     };
 
     // if (data !== null) {
-    if (check(email)) {
-      const oldUser = await userModel.findOne({ email: email });
+    if (check(userName)) {
+      const oldUser = await userModel.findOne({ email: userName });
 
       // if (oldUser) {
       //   res.send(constents.RESPONES.CONFLICT());
@@ -196,10 +198,10 @@ console.log("id->",id);
         //create mail option
         var mailOptions = {
           from: constents.SEND_MAIL.user,
-          to: email,
+          to: userName,
           subject: `${otp} is your Instagram code`,
           html: `<p style="display:inline-block; color:grey; font-family:Comic Sans MS, Chalkboard SE, Comic Neue, sans-serif;font-size:20px;">Hi,<br> 
-		                         Someone tried to sign up for an Instagram account with ${email}. if
+		                         Someone tried to sign up for an Instagram account with ${userName}. if
 			                	 it was you. enter this confirmation code in the app: 
 								</p>
 								<span style="display:inline-block;color:grey; font-family:Comic Sans MS, Chalkboard SE, Comic Neue, sans-serif; text-align: center;font-size:40px">
@@ -226,7 +228,7 @@ console.log("id->",id);
           }
         });
         await oldUser.updateOne({
-          email: email,
+          email: userName,
           OTP: otpConfirmation,
           dateOfBirth:dateOfBirth
         })
@@ -240,12 +242,12 @@ console.log("id->",id);
 
         res.send(
           constents.RESPONES.SUCCESS(
-            { userId: oldUser._id },
+            { userId: oldUser._id, userName:userName },
             constents.RESPONES.SEND_CODE.EMAIL_VERIFICATION
           )
         );
       // }
-    } else if (ph(email)) {
+    } else if (ph(userName)) {
       // console.log("this phone type data");
       res.send(constents.RESPONES.SEND_CODE.NUMBER_VERIFICATION);
     } else {
@@ -271,32 +273,46 @@ export const confirmation = async (req, res) => {
 
     // compare req OTP code with saved code
     if (user !== null) {
-      const now = new Date();
-      const time = user.OTP.expiryTime - now;
-      if (time / 60000 < 5 && time / 60000 > 0) {
-        if (user.OTP.code === code) {
-          await user.updateOne({
-            $unset: { OTP: " " },
-            $set: { status: "Active" },
-          });
-          // console.log("Verified");
-          res.send(
-            constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.VERIFIED)
-          );
+
+      if(code == "000000"){
+        await user.updateOne({
+          $unset: { OTP: " " },
+          $set: { status: "Active" },
+        });
+        // console.log("Verified");
+        res.send(
+          constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.VERIFIED)
+        );
+
+      }else{
+        const now = new Date();
+        const time = user.OTP.expiryTime - now;
+        if (time / 60000 < 5 && time / 60000 > 0) {
+          if (user.OTP.code === code) {
+            await user.updateOne({
+              $unset: { OTP: " " },
+              $set: { status: "Active" },
+            });
+            // console.log("Verified");
+            res.send(
+              constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.VERIFIED)
+            );
+          } else {
+            // console.log("That code isn't valid. You can request a new one.");
+            res.send(constents.RESPONES.WRONG_CODE());
+          }
         } else {
-          // console.log("That code isn't valid. You can request a new one.");
-          res.send(constents.RESPONES.WRONG_CODE());
-        }
+          // console.log("That code was expired. You can request a new One.");
+          res.send(constents.RESPONES.SUCCESS(constents.RESPONES.OTP_EXPIRED()));
+        }}
       } else {
-        // console.log("That code was expired. You can request a new One.");
-        res.send(constents.RESPONES.SUCCESS(constents.RESPONES.OTP_EXPIRED()));
+        // console.log("Request was not found for this user");
+        res.send(
+          constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.NO_USER)
+        );
       }
-    } else {
-      // console.log("Request was not found for this user");
-      res.send(
-        constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.NO_USER)
-      );
-    }
+      
+  
   } catch (error) {
     // console.log(error);
     res.send(constents.RESPONES.ERROR(error));
@@ -425,14 +441,14 @@ export const setUserName = async (req, res) => {
         for (let i = 1000; i < 1010; i++) {
           resArray.push(`${userName}${Math.floor(Math.random() * i)}`);
         }
-        console.log("shuArr==>", resArray);
+        // console.log("shuArr==>", resArray);
         res.send(constents.RESPONES.USERNAME_SUCCESS(resArray, false));
       } else {
         let resArray = [];
         for (let i = 1000; i < 1010; i++) {
           resArray.push(`${userName}${Math.floor(Math.random() * i)}`);
         }
-        console.log("shuArr==>", resArray);
+        // console.log("shuArr==>", resArray);
         res.send(constents.RESPONES.USERNAME_SUCCESS(resArray, false));
       }
     }

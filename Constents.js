@@ -135,7 +135,7 @@ constents.RESPONES = {
 		VERIFIED: "Verified",
 		NO_USER: "Request was not found for this user",
 		RESEND_WAIT: "An email is on its way.",
-		RESEND_CODE: "Code was Resend",
+		RESEND_CODE: "Your code was resent.",
 	},
 };
 
