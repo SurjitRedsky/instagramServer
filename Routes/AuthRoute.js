@@ -1,25 +1,22 @@
 import express from "express";
 import {
-	addBirthday,
-	addProfileImages,
-	confirmation,
-	loginUser,
-	registerUser,
-	resend,
-	sendConfirmationCode,
-	setUserName,
-	sginUpUser,
-	// sendMail,
-	// tryApi,
-	// userConfirmation,
-} from "../controllers/AuthController.js";
+  addBirthday,
+  addProfileImages,
+  confirmation,
+  loginUser,
+  registerUser,
+  resend,
+  sendConfirmationCode,
+  setUserName,
+  sginUpUser,
+} from "../Controllers/AuthController.js";
 import authMiddleWare from "../Middleware/AuthMiddleware.js";
 
 const router = express.Router();
 
 router.post("/login", loginUser);
 router.post("/register", registerUser);
-router.put("/add/:id",addBirthday)
+router.put("/add/:id", addBirthday);
 router.post(`/signUp/:id`, sendConfirmationCode);
 router.put(`/verified/:id`, confirmation);
 router.put(`/verified/resend/:id`, resend);
