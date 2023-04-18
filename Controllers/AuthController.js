@@ -118,7 +118,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
-//add birth day date 
+//add birth day date
 export const addBirthday = async (req, res) => {
   const { email, id } = req.params;
   const { dateOfBirth } = req.body;
@@ -140,16 +140,13 @@ export const addBirthday = async (req, res) => {
  ****** API for send confirmation code for mail ID ********/
 export const sendConfirmationCode = async (req, res) => {
   const { id } = req.params;
-const {userName,dateOfBirth}=req.body
+  const { userName, dateOfBirth } = req.body;
 
-console.log("id->",id);
-console.log("dateOf->",dateOfBirth)
-console.log("username->",userName);
-
+  console.log("id->", id);
+  console.log("dateOf->", dateOfBirth);
+  console.log("username->", userName);
 
   try {
-
-
     const ph = function (v) {
       return v.length === 10 && /^\+?[1-9][0-9]{7,14}$/.test(v);
     };
@@ -164,88 +161,85 @@ console.log("username->",userName);
       // if (oldUser) {
       //   res.send(constents.RESPONES.CONFLICT());
       // } else {
-        // To add minutes to the current time
-        function AddMinutesToDate(date, minutes) {
-          return new Date(new Date().getTime() + 5 * 60000);
-        }
+      // To add minutes to the current time
+      function AddMinutesToDate(date, minutes) {
+        return new Date(new Date().getTime() + 5 * 60000);
+      }
 
-        //Nodemailer auth data
-        let transporter = nodemailer.createTransport({
-          service: "gmail.com",
-          auth: {
-            user: constents.SEND_MAIL.user,
-            pass: constents.SEND_MAIL.password,
-          },
-        });
+      //Nodemailer auth data
+      let transporter = nodemailer.createTransport({
+        service: "gmail.com",
+        auth: {
+          user: constents.SEND_MAIL.user,
+          pass: constents.SEND_MAIL.password,
+        },
+      });
 
-        //OTP generator
-        let otp = otpGenerator.generate(6, {
-          upperCaseAlphabets: false,
-          specialChars: false,
-          lowerCaseAlphabets: false,
-        });
+      //OTP generator
+      let otp = otpGenerator.generate(6, {
+        upperCaseAlphabets: false,
+        specialChars: false,
+        lowerCaseAlphabets: false,
+      });
 
-        //set Expire time of OTP
-        const now = new Date();
-        const expiration_time = AddMinutesToDate(now, 5);
+      //set Expire time of OTP
+      const now = new Date();
+      const expiration_time = AddMinutesToDate(now, 5);
 
-        // Create confirmation instance
-        const otpConfirmation = {
-          code: otp,
-          expiryTime: expiration_time,
-        };
+      // Create confirmation instance
+      const otpConfirmation = {
+        code: otp,
+        expiryTime: expiration_time,
+      };
 
-        //create mail option
-        var mailOptions = {
-          from: constents.SEND_MAIL.user,
-          to: userName,
-          subject: `${otp} is your Instagram code`,
-          html: `<p style="display:inline-block; color:grey; font-family:Comic Sans MS, Chalkboard SE, Comic Neue, sans-serif;font-size:20px;">Hi,<br> 
+      //create mail option
+      var mailOptions = {
+        from: constents.SEND_MAIL.user,
+        to: userName,
+        subject: `${otp} is your Instagram code`,
+        html: `<p style="display:inline-block; color:grey; font-family:Comic Sans MS, Chalkboard SE, Comic Neue, sans-serif;font-size:20px;">Hi,<br> 
 		                         Someone tried to sign up for an Instagram account with ${userName}. if
 			                	 it was you. enter this confirmation code in the app: 
 								</p>
 								<span style="display:inline-block;color:grey; font-family:Comic Sans MS, Chalkboard SE, Comic Neue, sans-serif; text-align: center;font-size:40px">
 									${otp}
 							    </span>`,
-        };
+      };
 
-        //create user in mongo DB
-        // const user = new userModel({
-        //   email: email,
-        //   OTP: otpConfirmation,
-        // });
-        
-        
-        
+      //create user in mongo DB
+      // const user = new userModel({
+      //   email: email,
+      //   OTP: otpConfirmation,
+      // });
 
-        //send mail using nodemailer
-        transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-            console.log("some error are comming ", err);
-          } else {
-            console.log(info.envelope);
-            console.log(info.messageId);
-          }
-        });
-        await oldUser.updateOne({
-          email: userName,
-          OTP: otpConfirmation,
-          dateOfBirth:dateOfBirth
-        })
-        // await user.save();
+      //send mail using nodemailer
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.log("some error are comming ", err);
+        } else {
+          console.log(info.envelope);
+          console.log(info.messageId);
+        }
+      });
+      await oldUser.updateOne({
+        email: userName,
+        OTP: otpConfirmation,
+        dateOfBirth: dateOfBirth,
+      });
+      // await user.save();
 
-        //create block list in database
-        const blockList = new blockUserModel({
-          userId: oldUser._id,
-        });
-        await blockList.save();
+      //create block list in database
+      const blockList = new blockUserModel({
+        userId: oldUser._id,
+      });
+      await blockList.save();
 
-        res.send(
-          constents.RESPONES.SUCCESS(
-            { userId: oldUser._id, userName:userName },
-            constents.RESPONES.SEND_CODE.EMAIL_VERIFICATION
-          )
-        );
+      res.send(
+        constents.RESPONES.SUCCESS(
+          { userId: oldUser._id, userName: userName },
+          constents.RESPONES.SEND_CODE.EMAIL_VERIFICATION
+        )
+      );
       // }
     } else if (ph(userName)) {
       // console.log("this phone type data");
@@ -254,9 +248,6 @@ console.log("username->",userName);
       // console.log("enter valid user");
       res.send(constents.RESPONES.SEND_CODE.INVALID_DATA);
     }
-
-
-
   } catch (error) {
     // console.log(error);
     res.send(constents.RESPONES.ERROR(error));
@@ -273,8 +264,7 @@ export const confirmation = async (req, res) => {
 
     // compare req OTP code with saved code
     if (user !== null) {
-
-      if(code == "000000"){
+      if (code == "000000") {
         await user.updateOne({
           $unset: { OTP: " " },
           $set: { status: "Active" },
@@ -283,8 +273,7 @@ export const confirmation = async (req, res) => {
         res.send(
           constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.VERIFIED)
         );
-
-      }else{
+      } else {
         const now = new Date();
         const time = user.OTP.expiryTime - now;
         if (time / 60000 < 5 && time / 60000 > 0) {
@@ -295,7 +284,9 @@ export const confirmation = async (req, res) => {
             });
             // console.log("Verified");
             res.send(
-              constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.VERIFIED)
+              constents.RESPONES.SUCCESS(
+                constents.RESPONES.VERIFICATION.VERIFIED
+              )
             );
           } else {
             // console.log("That code isn't valid. You can request a new one.");
@@ -303,16 +294,17 @@ export const confirmation = async (req, res) => {
           }
         } else {
           // console.log("That code was expired. You can request a new One.");
-          res.send(constents.RESPONES.SUCCESS(constents.RESPONES.OTP_EXPIRED()));
-        }}
-      } else {
-        // console.log("Request was not found for this user");
-        res.send(
-          constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.NO_USER)
-        );
+          res.send(
+            constents.RESPONES.SUCCESS(constents.RESPONES.OTP_EXPIRED())
+          );
+        }
       }
-      
-  
+    } else {
+      // console.log("Request was not found for this user");
+      res.send(
+        constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.NO_USER)
+      );
+    }
   } catch (error) {
     // console.log(error);
     res.send(constents.RESPONES.ERROR(error));
@@ -433,7 +425,16 @@ export const setUserName = async (req, res) => {
       res.send(constents.RESPONES.USERNAME_SUCCESS(userName, true));
     } else if (userName.length > 7) {
       // first check length of userName and present in database or not
-      res.send(constents.RESPONES.USERNAME_SUCCESS(userName, true));
+      // res.send(constents.RESPONES.USERNAME_SUCCESS(userName, true));
+
+      const name = userName.split(" ");
+      console.log("new->", name[0]);
+      let resArray = [];
+      for (let i = 1000; i < 1010; i++) {
+        resArray.push(`${name[0]}${Math.floor(Math.random() * i)}`);
+      }
+      console.log("shuArr==>", resArray);
+      res.send(constents.RESPONES.USERNAME_SUCCESS(resArray, false));
     } else {
       // if used by any user then suggest for new userName
       if (userName.includes(".") || userName.includes("_")) {
@@ -441,14 +442,14 @@ export const setUserName = async (req, res) => {
         for (let i = 1000; i < 1010; i++) {
           resArray.push(`${userName}${Math.floor(Math.random() * i)}`);
         }
-        // console.log("shuArr==>", resArray);
+        console.log("shuArr==>", resArray);
         res.send(constents.RESPONES.USERNAME_SUCCESS(resArray, false));
       } else {
         let resArray = [];
         for (let i = 1000; i < 1010; i++) {
           resArray.push(`${userName}${Math.floor(Math.random() * i)}`);
         }
-        // console.log("shuArr==>", resArray);
+        console.log("shuArr==>", resArray);
         res.send(constents.RESPONES.USERNAME_SUCCESS(resArray, false));
       }
     }
@@ -578,28 +579,11 @@ export const addProfileImages = async (req, res) => {
   }
 };
 
-
-
 /**********************************************************************
  ********** API for send confirmation code  and save user  ************/
-export const sendCodeSignUpUser =async(req,res)=>{
-	const data = req.body
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const sendCodeSignUpUser = async (req, res) => {
+  const data = req.body;
+};
 
 // export const tryyyy = async (req, res) => {
 // 	// const mailTo = req.body.userName;

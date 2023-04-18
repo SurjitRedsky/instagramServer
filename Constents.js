@@ -101,7 +101,7 @@ constents.RESPONES = {
 
 	USERNAME_SUCCESS: (data, isAvailable) => {
 		return {
-			...data,
+			data,
 			statusCode: 200,
 			isAvailable,
 		};
