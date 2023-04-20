@@ -26,6 +26,34 @@ import blockUserRoute from './Routes/UserBlockRoute.js'
 import storyRoute from './Routes/StoryRoute.js'
 const app = express();
 
+
+// import io from 'socket.io'
+import {createServer } from 'http'
+import { Server } from "socket.io";
+
+const httpServer=createServer()
+const io = new Server(3001, {
+  cors: {
+		origin: "*",
+	},
+
+});
+
+
+io.on("connection", (socket) => {
+
+	
+	socket.on("connect", (newUserId) => {
+		console.log("sockectConeent",newUserId);
+	})
+	socket.on("disconnect", () => {
+		console.log("scocket disconnect");
+	});
+
+
+})
+
+
 // mongoose connect and then call server
 mongoose
 	.connect(
@@ -53,7 +81,7 @@ app.use(express.static("./public"));
 app.use(fileUpload());
 
 app.use("/accounts", authRoute);
-app.use("/user", userRoute);
+app.use("/user",authMiddleWare, userRoute);
 app.use("/posts", postRoute);
 app.use("/stories",storyRoute)
 app.use("/upload", uploadRoute);

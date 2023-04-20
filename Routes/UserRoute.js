@@ -10,12 +10,15 @@ import {
 	// followUser,
 	// unfollowUser,
 	getUserByUserName,
+	currentUser,
 } from "../Controllers/UserController.js";
 
 const router = express.Router();
 
 router.get("/", getAllUsers);
 // router.get("/", getttalll);
+router.get("/currentUser",currentUser)
+
 
 // router.get("/:id", getUser);
 router.get("/:id", getUser);

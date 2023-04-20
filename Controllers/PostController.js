@@ -396,7 +396,7 @@ export const getAllPost = async (req, res) => {
     if (data === null) {
       res.send(constents.RESPONES.NO_DATA("No post avialable "));
     } else {
-      res.send(constents.RESPONES.SUCCESS(data));
+      res.send(constents.RESPONES.SUCCESS({data}));
     }
   } catch (error) {
     res.send(constents.RESPONES.ERROR(error));

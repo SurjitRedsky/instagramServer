@@ -5,6 +5,22 @@ import { constents } from "../Constents.js";
 import mongoose from "mongoose";
 import blockUserModel from "../Models/BlockListModel.js";
 
+
+// *******************************************
+export const currentUser =async (req,res)=>{
+
+console.log("user->",req.user);
+  const user =req.user
+  try {
+  const data= await userModel.findById(user.id)
+  data.length === 0
+  ? res.send(constents.RESPONES.NO_DATA("No data"))
+  : res.send(constents.RESPONES.SUCCESS({data}, "successfully get user"))
+} catch (error) {
+  res.send(constents.RESPONES.ERROR(error))
+}
+}
+
 /********************************************
  ********** API for get all user ***********/
 export const getAllUsers = async (req, res) => {
@@ -16,7 +32,7 @@ export const getAllUsers = async (req, res) => {
     });
     res.send(
       constents.RESPONES.SUCCESS(
-        users,
+        {users},
         constents.RESPONES.USER_MESSAGE.ALL_USER
       )
     );
@@ -25,7 +41,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-``;
+
 /********************************************
  *** API for search user by given char  *****/
 export const getUserByNameStart = async function (req, res) {

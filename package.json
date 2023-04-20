@@ -25,6 +25,7 @@
 		"otp-generator": "^4.0.0",
 		"path": "^0.12.7",
 		"sharp": "^0.31.3",
+		"socket.io": "^4.6.1",
 		"swagger": "^0.7.5",
 		"swagger-jsdoc": "^6.2.7",
 		"swagger-tools": "^0.10.4",
