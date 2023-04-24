@@ -38,7 +38,7 @@ export const createComment = async (req, res) => {
 
 		if (comment !== null) {
 			await comment.save();
-			res.send(constents.RESPONES.SUCCESS(comment));
+			res.send(constents.RESPONES.SUCCESS({comment}));
 		} else {
 			res.send(constents.RESPONES.UPDATE_SUCCESS("No Comment Created"));
 		}

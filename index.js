@@ -28,30 +28,30 @@ const app = express();
 
 
 // import io from 'socket.io'
-import {createServer } from 'http'
-import { Server } from "socket.io";
 
-const httpServer=createServer()
-const io = new Server(3001, {
-  cors: {
-		origin: "*",
-	},
-
-});
+// import { Server } from "socket.io";
 
 
-io.on("connection", (socket) => {
+// const io = new Server(3001, {
+//   cors: {
+// 		origin: "*",
+// 	},
+
+// });
+
+
+// io.on("connection", (socket) => {
 
 	
-	socket.on("connect", (newUserId) => {
-		console.log("sockectConeent",newUserId);
-	})
-	socket.on("disconnect", () => {
-		console.log("scocket disconnect");
-	});
+// 	socket.on("connect", (newUserId) => {
+// 		console.log("sockectConeent",newUserId);
+// 	})
+// 	socket.on("disconnect", () => {
+// 		console.log("scocket disconnect");
+// 	});
 
 
-})
+// })
 
 
 // mongoose connect and then call server
