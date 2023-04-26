@@ -11,6 +11,7 @@ import authMiddleWare from "./Middleware/AuthMiddleware.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
+
 // npm i dotenv
 import authRoute from "./Routes/AuthRoute.js";
 import postRoute from "./Routes/PostRoute.js";
@@ -78,6 +79,11 @@ app.use(bodyParser.json({ limit: "250mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "250mb", extended: true }));
 app.use(cors());
 app.use(express.static("./public"));
+app.use(express.static("./public/uploads/files"));
+app.use(express.static("./public/uploads/images"));
+app.use(express.static("./public/uploads/videos"));
+
+
 app.use(fileUpload());
 
 app.use("/accounts", authRoute);

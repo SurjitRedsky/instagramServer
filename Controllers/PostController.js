@@ -31,12 +31,13 @@ export const createPost = async (req, res) => {
   newPost.userId = userId;
 
   try {
- 
     if (req.body.type === 1) {
       const __dirname = path.resolve();
       const uuid = v1();
 
       const image = newPost.media[0].url.uri;
+
+      // const image=req.files
       async function saveImage(baseImage) {
         /*path of the folder where your project is saved. (In my case i got it from config file, root path of project).*/
         const uploadPath = __dirname;
@@ -85,17 +86,21 @@ export const createPost = async (req, res) => {
       //store thumbnail to database
       // newPost.userId = userId;
 
-      const thumbnailUrl = await saveImage(image);
-      newPost.media[0].thumbnail = {
-        uri: `data:image/jpeg;base64,${thumbnailUrl}`,
-      };
+      if (image) {
+        const thumbnailUrl = await saveImage(image);
+        newPost.media[0].thumbnail = {
+          uri: `data:image/jpeg;base64,${thumbnailUrl}`,
+        };
+      } 
+
       //send postId to likes model
       const newLike = new likeModel({ postId: newPost._id });
 
       await newPost.save();
       await newLike.save();
-      res.send(constents.RESPONES.SUCCESS(newPost, "post upload succesfully"));
- 
+      res.send(
+        constents.RESPONES.SUCCESS({ newPost }, "post upload succesfully")
+      );
     } else {
       newPost.visibilty = "private";
       await newPost.save();
@@ -209,10 +214,11 @@ export const uploadImageOnFireBase = async (req, res) => {
   });
 
   const bucket = admin.storage().bucket();
-
+  // const {file} =req.body
   try {
     const file = req.files.file;
 
+    console.log("form server file ->", file);
     if (!file) {
       throw new Error("Please upload a file");
     }
@@ -396,7 +402,7 @@ export const getAllPost = async (req, res) => {
     if (data === null) {
       res.send(constents.RESPONES.NO_DATA("No post avialable "));
     } else {
-      res.send(constents.RESPONES.SUCCESS({data}));
+      res.send(constents.RESPONES.SUCCESS({ data }));
     }
   } catch (error) {
     res.send(constents.RESPONES.ERROR(error));
