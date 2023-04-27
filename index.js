@@ -77,8 +77,11 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.json({ limit: "250mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "250mb", extended: true }));
-app.use(cors());
+app.use(cors());	
 app.use(express.static("./public"));
+app.use(express.static("./uploads/files"));
+app.use(express.static("./uploads/images"));
+app.use(express.static("./uploads/videos"));
 app.use(express.static("./public/uploads/files"));
 app.use(express.static("./public/uploads/images"));
 app.use(express.static("./public/uploads/videos"));

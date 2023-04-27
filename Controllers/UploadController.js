@@ -10,18 +10,18 @@ export const uploadFileGetLink = async (req, res) => {
   const file = req.files.file;
 
   try {
-    if (file!="null") {
+    if (file != "null") {
       const fileName = Date.now() + path.extname(file.name);
       // const fileName = Date.now() + "_" + file.name;
 
       if (file.mimetype == "image/png" || file.mimetype == "image/jpeg") {
-        file.mv(`public/uploads/images/${fileName}`, (err) => {
+        file.mv(`uploads/images/${fileName}`, (err) => {
           if (err) {
             console.log("err->>", err);
 
-            res.send(constents.RESPONES.ERROR(err, " Uploading error "));
+            return res.send(constents.RESPONES.ERROR(err, " Uploading error "));
           }
-          res.send(
+          return res.send(
             constents.RESPONES.SUCCESS(
               { url: `${req.protocol}://${req.get("host")}/${fileName}` },
               "Successfully Genrated a link"
@@ -29,13 +29,13 @@ export const uploadFileGetLink = async (req, res) => {
           );
         });
       } else if (file.mimetype == "video/mp4") {
-        file.mv(`public/uploads/videos/${fileName}`, (err) => {
+        file.mv(`uploads/videos/${fileName}`, (err) => {
           if (err) {
             console.log("err->>", err);
 
-            res.send(constents.RESPONES.ERROR(err, " Uploading error "));
+            return res.send(constents.RESPONES.ERROR(err, " Uploading error "));
           }
-          res.send(
+          return res.send(
             constents.RESPONES.SUCCESS(
               { url: `${req.protocol}://${req.get("host")}/${fileName}` },
               "Successfully Genrated a link"
@@ -43,12 +43,12 @@ export const uploadFileGetLink = async (req, res) => {
           );
         });
       } else {
-        file.mv(`public/uploads/files/${fileName}`, (err) => {
+        file.mv(`uploads/files/${fileName}`, (err) => {
           if (err) {
             console.log("err->>", err);
-            res.send(constents.RESPONES.ERROR(err, " Uploading error "));
+            return res.send(constents.RESPONES.ERROR(err, " Uploading error "));
           }
-          res.send(
+          return res.send(
             constents.RESPONES.SUCCESS(
               { url: `${req.protocol}://${req.get("host")}/${fileName}` },
               "Successfully Genrated a link"

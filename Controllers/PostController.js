@@ -30,6 +30,8 @@ export const createPost = async (req, res) => {
   const newPost = new postModel(req.body);
   newPost.userId = userId;
 
+  console.log("data",req.body);
+
   try {
     if (req.body.type === 1) {
       const __dirname = path.resolve();
@@ -99,12 +101,12 @@ export const createPost = async (req, res) => {
       await newPost.save();
       await newLike.save();
       res.send(
-        constents.RESPONES.SUCCESS({ newPost }, "post upload succesfully")
+        constents.RESPONES.SUCCESS({newPost} , "Your post has been shared.")
       );
     } else {
       newPost.visibilty = "private";
       await newPost.save();
-      res.send(constents.RESPONES.SUCCESS(newPost, "story upload succesfully"));
+      res.send(constents.RESPONES.SUCCESS({newPost}, "story upload succesfully"));
     }
   } catch (error) {
     console.log(error);
