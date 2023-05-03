@@ -1,71 +1,76 @@
 import mongoose from "mongoose";
 import postModel from "../Models/PostModel.js";
 import likeModel from "../Models/postModel/LikesModel.js";
+import { constents } from "../Constents.js";
 
 export const likePost = async (req, res) => {
-	const postId = req.params.id;
-	const userId = req.body._id;
-	const userData = { _id: req.body._id, userName: req.body.userName };
+  const userId = req.user.id;
+  const postId = req.params.id;
+  console.log("iiii->", userId, postId);
 
-	const post = await likeModel.findOne({ postId: `${postId}` });
+  try {
+    const likeData = await likeModel.findOne({ postId: postId });
 
-	const user = post.users.filter((ele) => {
-		return ele._id === userId;
-	});
-	try {
-		if (user.length === 0) {
-			await post.updateOne({ $push: { users: userData } });
-			res.status(200).json("Post liked");
-		} else {
-			await post.updateOne({ $pull: { users: userData } });
-			res.status(200).json("Post disliked");
-		}
-	} catch (error) {
-		res.status(500).json(error);
-	}
+    if (likeData === null) {
+      const newLike = new likeModel({ postId: postId, users: [userId] });
+      await newLike.save();
+      res.send(constents.RESPONES.UPDATE_SUCCESS("post was liked"));
+    } else {
+      if (likeData?.users?.includes(userId)) {
+        await likeData.updateOne({ $pull: { users: userId } });
+        res.send(constents.RESPONES.UPDATE_SUCCESS("post was disLiked"));
+      } else {
+        await likeData.updateOne({ $push: { users: userId } });
+        res.send(constents.RESPONES.UPDATE_SUCCESS("post was liked"));
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.send(constents.RESPONES.ERROR(error));
+  }
 };
 
 export const getLikes = async (req, res) => {
-	const id = mongoose.Types.ObjectId(req.params.postId);
-	console.log("post uudd-->", id);
-	let likeData = await likeModel.aggregate([
-		{
-			$match: { postId: id },
-		},
-		{
-			$lookup: {
-				from: "users",
-				foreignField: "_id",
-				localField: "users",
-				as: "user",
-			},
-		},
-		{
-			$lookup: {
-				from: "posts",
-				localField: "postId",
-				foreignField: "_id",
-				as: "post",
-			},
-		},
-	]);
-	console.log("data--->>", likeData);
-	try {
-		res.status(200).json(likeData);
-	} catch (error) {
-		res.status(500).json(error);
-	}
+  const id = mongoose.Types.ObjectId(req.params.postId);
+  console.log("post uudd-->", id);
+  let likeData = await likeModel.aggregate([
+    {
+      $match: { postId: id },
+    },
+    {
+      $lookup: {
+        from: "users",
+        foreignField: "_id",
+        localField: "users",
+        as: "user",
+      },
+    },
+    {
+      $lookup: {
+        from: "posts",
+        localField: "postId",
+        foreignField: "_id",
+        as: "post",
+      },
+    },
+  ]);
+  console.log("data--->>", likeData);
+  try {
+    res.status(200).json(likeData);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 export const like = async (req, res) => {
-	const likedData = new likeModel(req.body);
-	try {
-		await likedData.save();
-		res.status(200).json(likedData);
-	} catch (error) {
-		res.status(500).json(error);
-		console.log(error);
-	}
+  const likedData = new likeModel(req.body);
+  try {
+    await likedData.save();
+    res.status(200).json(likedData);
+  } catch (error) {
+    res.status(500).json(error);
+    console.log(error);
+  }
 };
 // organizationData.getUserByOrganizationName = async function (req, res) {
 // 	const { name } = req.params;

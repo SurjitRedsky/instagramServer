@@ -358,12 +358,6 @@ export const getAllPost = async (req, res) => {
           as: "comments",
         },
       },
-      // {
-      // 	$unwind: {
-      // 		path: "$comments",
-      // 		preserveNullAndEmptyArrays: true,
-      // 	},
-      // },
       {
         $lookup: {
           from: "users",
@@ -401,6 +395,7 @@ export const getAllPost = async (req, res) => {
         },
       },
     ]);
+    console.log("pos-->",data);
     if (data === null) {
       res.send(constents.RESPONES.NO_DATA("No post avialable "));
     } else {
@@ -627,134 +622,7 @@ export const removedFromTagList = async (req, res) => {
   }
 };
 
-// remove taged user from tag list
-// export const removeTagedUser = async (req, res) => {
-//   const postId = req.params.id;
 
-//   const userId = req.params.userId;
-//   try {
-//     const isTaged = await postModel.findById(postId);
-//     const listTaged = isTaged.tag;
-//     if (listTaged.includes(`${userId}`)) {
-//       const post = await postModel.findOneAndUpdate(
-//         { _id: postId },
-//         { $pull: { tag: `${userId}` } }
-//       );
-//       res.status(200).json("tag list updated");
-//     }
-//     res.status(200);
-//   } catch (error) {
-//     res.status(500).send(error);
-//   }
-// };
-
-// };
-
-// const uploadFile = (file) => {
-// var serviceAccount=require('../firebase_keys.json')
-
-// 	try {
-// 		admin.initializeApp({
-// 			credential: admin.credential.cert(serviceAccount),
-// 			storageBucket:"gs://notificationtest-69b51.appspot.com/"
-// 		});
-
-// 		const upload =multer({
-// 			storage:multer.memoryStorage()
-// 			limits:{
-// 				fileSize:5*1024*1024
-// 			}
-// 		})
-// 		const bucket = admin.storage().bucket();
-
-// Upload a file to Firebase Storage
-// 	const bucket = admin
-// 		.storage()
-// 		.bucket();
-// 	console.log("bucket ->");
-// 	const filePath = file;
-// 	const destination = req.files.files.name;
-// 	console.log("---------->>", destination);
-// 	bucket
-// 		.upload(filePath, {
-// 			destination: destination,
-// 			metadata: {
-// 				contentType: "video/mp4",
-// 			},
-// 		})
-// 		.then(() => {
-// 			console.log("File uploaded successfully.");
-// 		})
-// 		.catch((error) => {
-// 			console.error("Error uploading file:", error);
-// 		});
-// } catch (error) {
-// 	console.log("error->", error);
-// }
-// };
-
-// 	try {
-// 		// console.log("request file ->", req.files);
-// 		saveVideo(req.files)
-// 			.then((data) => {
-// 				uploadFile(data);
-// 				res.send(data);
-// 			})
-// 			.catch((err) => {
-// 				// console.log("err->", err);
-// 				res.send(err);
-// 			});
-// 	} catch (error) {
-// 		res.send(error);
-// 		console.log(error);
-// 	}
-// };
-/****************************
- * upload video on fireBase *
- ****************************/
-
-// try {
-// 	res.send("post save");
-// } catch (error) {
-// 	res.send(error);
-// 	console.log("err->", error);
-// }
-
-//FILE UPLOAD SERVICE
-// fileUploadService.uploadFileToLocal = async (
-// 	payload,
-// 	pathToUpload,
-// 	pathOnServer
-// ) => {
-// 	let fileName = Date.now() + "_" + payload.file.originalname;
-// 	let directoryPath = pathToUpload
-// 		? pathToUpload
-// 		: path.resolve(
-// 				__dirname + `../../..${CONFIG.PATH_TO_UPLOAD_SUBMISSIONS_ON_LOCAL}`
-// 		  );
-// 	// create user's directory if not present.
-// 	if (!fs.existsSync(directoryPath)) {
-// 		fs.mkdirSync(directoryPath);
-// 	}
-// 	let fileSavePath = `${directoryPath}/${fileName}`;
-// 	let writeStream = fs.createWriteStream(fileSavePath);
-// 	return new Promise((resolve, reject) => {
-// 		writeStream.write(payload.file.buffer);
-// 		writeStream.on("error", function (err) {
-// 			reject(err);
-// 		});
-// 		writeStream.end(function (err) {
-// 			if (err) {
-// 				reject(err);
-// 			} else {
-// 				let fileUrl = pathToUpload
-// 					? `${CONFIG.SERVER_URL}${pathOnServer}/${fileName}`
-// 					: `${CONFIG.SERVER_URL}${CONFIG.PATH_TO_UPLOAD_SUBMISSIONS_ON_LOCAL}/${fileName}`;
-// 				resolve(fileUrl);
-// 			}
-// 		});
-// 	});
-// };
 //get all posts =====================
 
 export const getPostTesting = async (req, res) => {

@@ -90,16 +90,16 @@ app.use(express.static("./public/uploads/videos"));
 app.use(fileUpload());
 
 app.use("/accounts", authRoute);
-app.use("/user",authMiddleWare, userRoute);
+app.use("/user", userRoute);
 app.use("/posts", postRoute);
 app.use("/stories",storyRoute)
 app.use("/upload", uploadRoute);
 app.use("/message", messageRoute);
 app.use("/chatRoom", chatRoomRoute);
 app.use("/groupChat", groupChatRoute);
-app.use("/likePost", likeRoute);
+app.use("/likePost",authMiddleWare, likeRoute);
 app.use("/comment", commentRoute);
-app.use("/follow",authMiddleWare, followRoute);
+app.use("/follow",followRoute);
 app.use("/block",blockUserRoute)
 
 // auth middleware

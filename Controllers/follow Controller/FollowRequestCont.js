@@ -7,6 +7,7 @@ import followingModel from "../../Models/followModel/FollowingModel.js";
 import UserModel from "../../Models/UserModel.js";
 import mongoose from "mongoose";
 import { constents } from "../../Constents.js";
+import jwt from "jsonwebtoken";
 // import followingModel from "../../Models/postModel/FollowingModel";
 
 // export const getAllRequest = async (req, res) => {
@@ -81,6 +82,8 @@ export const requestAccept = async (req, res) => {
 };
 
 export const unfollow = async (req, res) => {
+
+
 	const user = req.user;
 	console.log("users-->>", user);
 
@@ -109,8 +112,14 @@ export const unfollow = async (req, res) => {
 };
 
 export const followNew = async (req, res) => {
-	const user = req.user;
-	console.log("user->", user);
+
+	const token = req.headers.authorization;
+	console.log("token->",token);
+	const decoded = jwt.verify(token, process.env.JWTKEY);
+	const currentUserId = decoded.id;
+
+	
+  // const user = req.user
 	const { id } = req.params;
 
 	try {
@@ -118,7 +127,7 @@ export const followNew = async (req, res) => {
 		console.log("followedUser==>", followedUser);
 
 		if (followedUser.visibility === 1) {
-			const following = await followModel.findOne({ userId: user.id });
+			const following = await followModel.findOne({ userId: currentUserId });
 			console.log("following->", following);
 
 			// if (following.following.includes(id)) {
@@ -128,7 +137,7 @@ export const followNew = async (req, res) => {
 				await following.updateOne({ $push: { following: id } });
 			} else {
 				const followingData = new followModel({
-					userId: user.id,
+					userId: currentUserId ,
 					following: [mongoose.Types.ObjectId(id)],
 					follower: [],
 				});
@@ -138,24 +147,25 @@ export const followNew = async (req, res) => {
 				const follow = await followModel.findOne({ userId: id });
 				console.log("follow->", follow);
 				if (follow !== null) {
-					await follow.updateOne({ $push: { follower: user.id } });
+					await follow.updateOne({ $push: { follower: currentUserId } });
 				} else {
 					const followData = new followModel({
 						userId: id,
 						following: [],
-						follower: [mongoose.Types.ObjectId(user.id)],
+						follower: [mongoose.Types.ObjectId(currentUserId )],
 					});
 					await followData.save();
 				}
 			}
-			res.status(200).json("following");
+			res.send(constents.RESPONES.SUCCESS("","following"))
+			// res.status(200).json("following");
 		} else {
 			const request = new requestModel({
-				from: user.id,
+				from: currentUserId ,
 				to: id,
 			});
 			await request.save();
-			res.send(constents.RESPONES.SUCCESS(request));
+			res.send(constents.RESPONES.SUCCESS(request,"requested"));
 		}
 	} catch (error) {
 		console.log(error);

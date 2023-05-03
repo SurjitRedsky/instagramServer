@@ -12,6 +12,7 @@ import {
 	getUserByUserName,
 	currentUser,
 } from "../Controllers/UserController.js";
+import authMiddleWare from "../Middleware/AuthMiddleware.js";
 
 const router = express.Router();
 
@@ -23,8 +24,8 @@ router.get("/currentUser",currentUser)
 // router.get("/:id", getUser);
 router.get("/:id", getUser);
 
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+router.put("/:id", authMiddleWare,updateUser);
+router.delete("/:id", authMiddleWare,deleteUser);
 
 //search api for user by userName
 router.get("/search-by-userName/:userName", getUserByUserName);

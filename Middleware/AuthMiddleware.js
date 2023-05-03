@@ -1,10 +1,9 @@
+
 import jwt from "jsonwebtoken";
+import { constents } from "../Constents.js";
 // const JWTKEY = "fe1a1925a379f3be5394b64d14794933";
 const { JWTKEY } = process.env;
 
-// dotenv.config();
-// const secret = JWTKEY;
-// console.log("secret: ", JWTKEY);
 const authMiddleWare = async (req, res, next) => {
 	try {
 		const token = req.headers.authorization;
@@ -24,7 +23,7 @@ const authMiddleWare = async (req, res, next) => {
 		}
 		return res.status(401).json({ success: false, message: "Unauthorized" });
 	} catch (error) {
-		res.status(500).json(error);
+		res.send(constents.RESPONES.ERROR(error))
 	}
 };
 
