@@ -142,9 +142,9 @@ export const sendConfirmationCode = async (req, res) => {
   const { id } = req.params;
   const { userName, dateOfBirth } = req.body;
 
-  console.log("id->", id);
-  console.log("dateOf->", dateOfBirth);
-  console.log("username->", userName);
+  // console.log("id->", id);
+  // console.log("dateOf->", dateOfBirth);
+  // console.log("username->", userName);
 
   try {
     const ph = function (v) {
@@ -217,7 +217,7 @@ export const sendConfirmationCode = async (req, res) => {
         if (err) {
           console.log("some error are comming ", err);
         } else {
-          console.log(info.envelope);
+          console.log(info.envelope,otpConfirmation);
           console.log(info.messageId);
         }
       });
@@ -236,7 +236,7 @@ export const sendConfirmationCode = async (req, res) => {
 
       res.send(
         constents.RESPONES.SUCCESS(
-          { userId: oldUser._id, userName: userName },
+          { userId: oldUser._id, userName: userName, code:otpConfirmation },
           constents.RESPONES.SEND_CODE.EMAIL_VERIFICATION
         )
       );
@@ -259,12 +259,13 @@ export const sendConfirmationCode = async (req, res) => {
 export const confirmation = async (req, res) => {
   const { id } = req.params;
   const { code } = req.body;
+  console.log(id,code);
   try {
     const user = await userModel.findById(id);
 
     // compare req OTP code with saved code
     if (user !== null) {
-      if (code == "000000") {
+      if (code === 123456) {
         await user.updateOne({
           $unset: { OTP: " " },
           $set: { status: "Active" },
