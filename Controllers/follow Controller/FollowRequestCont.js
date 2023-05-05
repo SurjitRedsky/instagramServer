@@ -113,8 +113,10 @@ export const unfollow = async (req, res) => {
 
 export const followNew = async (req, res) => {
 
-	const token = req.headers.authorization;
-	console.log("token->",token);
+	// const token = req.headers.authorization;
+	const token = req.headers.authorization
+	console.log("token->",jwt.verify(JSON.parse(token), process.env.JWTKEY));
+	jwt.verify(token, process.env.JWTKEY)?console.log("TRUE"):console.log("FALSE");
 	const decoded = jwt.verify(token, process.env.JWTKEY);
 	const currentUserId = decoded.id;
 

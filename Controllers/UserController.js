@@ -239,12 +239,15 @@ export const getUser = async (req, res) => {
 
   const userId = req.params.id;
   console.log("userId==>", userId);
-  
-      const token = req.headers.authorization;
-      console.log("token->",token);
-      const decoded = jwt.verify(token, process.env.JWTKEY);
-      const currentUserId = decoded.id;
   try {
+    
+        const token = req.headers.authorization;
+        console.log("token->",process.env.JWTKEY);
+
+        const decoded = jwt.verify(token, process.env.JWTKEY)
+        console.log("decoded-->",decoded);
+
+        const currentUserId = decoded.id;
 
     const list = await blockUserModel.findOne({ userId: currentUserId });
 
