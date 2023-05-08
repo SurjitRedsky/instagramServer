@@ -10,10 +10,7 @@ import { constents } from "../../Constents.js";
 import jwt from "jsonwebtoken";
 // import followingModel from "../../Models/postModel/FollowingModel";
 
-// export const getAllRequest = async (req, res) => {
-// 	const user = req.user;
-// 	const requests = await requestModel.find({});
-// };
+
 
 export const requestForFollow = async (req, res) => {
 	const user = req.user;

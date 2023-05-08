@@ -8,11 +8,16 @@ import blockUserModel from "../Models/BlockListModel.js";
 
 // *******************************************
 export const currentUser =async (req,res)=>{
+  const token = req.headers.authorization;
+  console.log("token->",process.env.JWTKEY);
 
-console.log("user->",req.user);
-  const user =req.user
+  const decoded = jwt.verify(token, process.env.JWTKEY)
+  console.log("decoded-->",decoded);
+
+  const currentUserId = decoded.id;
+
   try {
-  const data= await userModel.findById(user.id)
+  const data= await userModel.findById(currentUserId)
   data.length === 0
   ? res.send(constents.RESPONES.NO_DATA("No data"))
   : res.send(constents.RESPONES.SUCCESS({data}, "successfully get user"))

@@ -1,15 +1,15 @@
+import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
-// import path from "node:path";
 import bodyParser from "body-parser";
+// import path from "node:path";
 // import process from "node:process";
-import cors from "cors";
-import fileUpload from "express-fileupload";
-import authMiddleWare from "./Middleware/AuthMiddleware.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import fileUpload from "express-fileupload";
+import authMiddleWare from "./Middleware/AuthMiddleware.js";
+dotenv.config();
 
 
 // npm i dotenv
@@ -75,9 +75,11 @@ mongoose
 //view engines setup
 app.set("view engine", "ejs");
 
+app.use(cors());	
+app.use(fileUpload());
 app.use(bodyParser.json({ limit: "250mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "250mb", extended: true }));
-app.use(cors());	
+
 app.use(express.static("./public"));
 app.use(express.static("./uploads/files"));
 app.use(express.static("./uploads/images"));
@@ -87,7 +89,6 @@ app.use(express.static("./public/uploads/images"));
 app.use(express.static("./public/uploads/videos"));
 
 
-app.use(fileUpload());
 
 app.use("/accounts", authRoute);
 app.use("/user", userRoute);

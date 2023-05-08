@@ -4,5 +4,5 @@ const router = express.Router();
 
 router.post("/", like);
 router.get("/:postId", getLikes);
-router.put("/:id", likePost);
+router.put("/:id" ,likePost);
 export default router;

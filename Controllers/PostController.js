@@ -358,6 +358,7 @@ export const getAllPost = async (req, res) => {
           as: "comments",
         },
       },
+      
       {
         $lookup: {
           from: "users",
@@ -372,6 +373,7 @@ export const getAllPost = async (req, res) => {
           preserveNullAndEmptyArrays: true,
         },
       },
+      
       {
         $project: {
           media: {
@@ -387,11 +389,12 @@ export const getAllPost = async (req, res) => {
           likes: {
             users: "$likes.users",
           },
-          comments: {
-            text: "$comments.text",
-            commentedBy: "$comments._id",
-            likesOnComments: "$comments.likesOnComments",
-          },
+          comments:1
+          // comments: [
+          //  { text: "$comments.text"},
+          //   {commentedBy: "$comments._id"},
+          //   {likesOnComments: "$comments.likesOnComments"},
+          // ],
         },
       },
     ]);

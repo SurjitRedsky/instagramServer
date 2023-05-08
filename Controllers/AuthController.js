@@ -265,12 +265,13 @@ export const confirmation = async (req, res) => {
 
     // compare req OTP code with saved code
     if (user !== null) {
-      if (code === 123456) {
+      console.log("code-->>>",code == 123456);
+
+      if (code == 123456) {
         await user.updateOne({
           $unset: { OTP: " " },
           $set: { status: "Active" },
         });
-        // console.log("Verified");
         res.send(
           constents.RESPONES.SUCCESS(constents.RESPONES.VERIFICATION.VERIFIED)
         );
