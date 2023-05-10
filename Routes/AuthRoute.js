@@ -2,11 +2,13 @@ import express from "express";
 import {
   addBirthday,
   addProfileImages,
+  checkUserPresent,
   confirmation,
   loginUser,
   registerUser,
   resend,
   sendConfirmationCode,
+  sendForgotPasswordLink,
   setUserName,
   sginUpUser,
 } from "../Controllers/AuthController.js";
@@ -23,5 +25,8 @@ router.put(`/verified/resend/:id`, resend);
 router.put(`/signUp/user/:id`, sginUpUser);
 router.put(`/signUp/user/profile/:id`, addProfileImages);
 router.post("/createUserName", setUserName);
+
+router.get(`/checkUser/:userName`,checkUserPresent)
+router.post(`/challegeTrue/sendLink/:userName`,sendForgotPasswordLink)
 
 export default router;

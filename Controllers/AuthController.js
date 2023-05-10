@@ -217,7 +217,7 @@ export const sendConfirmationCode = async (req, res) => {
         if (err) {
           console.log("some error are comming ", err);
         } else {
-          console.log(info.envelope,otpConfirmation);
+          console.log(info.envelope, otpConfirmation);
           console.log(info.messageId);
         }
       });
@@ -236,7 +236,7 @@ export const sendConfirmationCode = async (req, res) => {
 
       res.send(
         constents.RESPONES.SUCCESS(
-          { userId: oldUser._id, userName: userName, code:otpConfirmation },
+          { userId: oldUser._id, userName: userName, code: otpConfirmation },
           constents.RESPONES.SEND_CODE.EMAIL_VERIFICATION
         )
       );
@@ -259,13 +259,13 @@ export const sendConfirmationCode = async (req, res) => {
 export const confirmation = async (req, res) => {
   const { id } = req.params;
   const { code } = req.body;
-  console.log(id,code);
+  console.log(id, code);
   try {
     const user = await userModel.findById(id);
 
     // compare req OTP code with saved code
     if (user !== null) {
-      console.log("code-->>>",code == 123456);
+      console.log("code-->>>", code == 123456);
 
       if (code == 123456) {
         await user.updateOne({
@@ -586,6 +586,150 @@ export const addProfileImages = async (req, res) => {
 export const sendCodeSignUpUser = async (req, res) => {
   const data = req.body;
 };
+
+/**********************************************************************
+ ************** API for send Link for forgot Password  ****************/
+export const sendForgotPasswordLink = async (req, res) => {
+  const { userName } = req.body;
+
+  try {
+    const ph = function (v) {
+      return v.length === 10 && /^\+?[1-9][0-9]{7,14}$/.test(v);
+    };
+    const check = function (v) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    };
+
+    // if (data !== null) {
+    if (check(userName)) {
+      const oldUser = await userModel.findOne({ email: userName });
+
+      // To add minutes to the current time
+      function AddMinutesToDate(date, minutes) {
+        return new Date(new Date().getTime() + 5 * 60000);
+      }
+
+      //Nodemailer auth data
+      let transporter = nodemailer.createTransport({
+        service: "gmail.com",
+        auth: {
+          user: constents.SEND_MAIL.user,
+          pass: constents.SEND_MAIL.password,
+        },
+      });
+
+      // //OTP generator
+      // let otp = otpGenerator.generate(6, {
+      //   upperCaseAlphabets: false,
+      //   specialChars: false,
+      //   lowerCaseAlphabets: false,
+      // });
+
+      //set Expire time of OTP
+      // const now = new Date();
+      // const expiration_time = AddMinutesToDate(now, 5);
+
+      // // Create confirmation instance
+      // const otpConfirmation = {
+      //   code: otp,
+      //   expiryTime: expiration_time,
+      // };
+
+      //create mail option
+      var mailOptions = {
+        from: constents.SEND_MAIL.user,
+        to: userName,
+        subject: `Request for Forgot Password`,
+        html: `<p style="display:inline-block; color:grey; font-family:Comic Sans MS, Chalkboard SE, Comic Neue, sans-serif;font-size:20px;">Hi,<br> 
+		                        Your try to Change Password of ${userName} Profile.
+								</p>`,
+      };
+
+      //create user in mongo DB
+      // const user = new userModel({
+      //   email: email,
+      //   OTP: otpConfirmation,
+      // });
+
+      //send mail using nodemailer
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.log("some error are comming ", err);
+        } else {
+          console.log(info.envelope, otpConfirmation);
+          console.log(info.messageId);
+        }
+      });
+      // await oldUser.updateOne({
+      //   email: userName,
+      //   OTP: otpConfirmation,
+      //   dateOfBirth: dateOfBirth,
+      // });
+      // await user.save();
+
+      //create block list in database
+      // const blockList = new blockUserModel({
+      //   userId: oldUser._id,
+      // });
+      // await blockList.save();
+
+      res.send(
+        constents.RESPONES.SUCCESS(
+          { userId: oldUser._id, userName: userName},
+          constents.RESPONES.SEND_CODE.EMAIL_VERIFICATION
+        )
+      );
+      // }
+    } else if (ph(userName)) {
+      // console.log("this phone type data");
+      res.send(constents.RESPONES.SEND_CODE.NUMBER_VERIFICATION);
+    } else {
+      // console.log("enter valid user");
+      res.send(constents.RESPONES.SEND_CODE.INVALID_DATA);
+    }
+  } catch (error) {
+    // console.log(error);
+    res.send(constents.RESPONES.ERROR(error));
+  }
+};
+
+
+
+/**********************************************************************
+ ************** API for check user is present or not ****************/
+export const checkUserPresent=async (req,res)=>{
+  const {userName}=req.params
+
+
+  const ph = function (v) {
+    return v.length === 10 && /^\+?[1-9][0-9]{7,14}$/.test(v);
+  };
+  const checkEmail = function (v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  };
+
+  try {
+    let user;
+    if (!ph(userName) && !checkEmail(userName)) {
+      user = await userModel.findOne({ userName: userName });
+    } else if (checkEmail(userName)) {
+      user = await userModel.findOne({ email: userName });
+    } else {
+      user = await userModel.findOne({ phoneNumber: userName });
+    }
+
+    if(user){
+      res.send(constents.RESPONES.SUCCESS("success"))
+    }else{
+      res.send(constents.RESPONES.NO_DATA("No User Found"))
+    }
+
+  } catch (error) {
+    console.log(error);
+    res.send(constents.RESPONES.ERROR(error))
+  }
+
+}
 
 // export const tryyyy = async (req, res) => {
 // 	// const mailTo = req.body.userName;
